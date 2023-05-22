@@ -12,8 +12,8 @@ import sys
 import openai
 import requests
 
-OPENAI_API_KEY = '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'
-APP_PASSWORD = 'bhooumgvnvshduqj'
+OPENAI_API_KEY = ''
+APP_PASSWORD = ''
 GMAIL_ACCOUNT = 'dilippatnana1231@gmail.com'
 
 # OpenAI ChatGPT API credentials
