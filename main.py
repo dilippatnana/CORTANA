@@ -4,17 +4,21 @@ import speech_recognition as sr
 import pyaudio
 import wikipedia
 import webbrowser
-import smtplib
 import pywhatkit as kit
 import pyjokes
 import time
 import sys
 import openai
 import requests
+import smtplib, ssl
+import getpass
+from email.message import EmailMessage
 
 OPENAI_API_KEY = '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'
-APP_PASSWORD = 'bhooumgvnvshduqj'
+APP_PASSWORD = 'Your app password'
 GMAIL_ACCOUNT = 'dilippatnana1231@gmail.com'
+SMTP_SERVER = "smtp.gmail.com"
+PORT = 587  # For starttls
 
 # OpenAI ChatGPT API credentials
 openai.api_key = OPENAI_API_KEY
@@ -33,7 +37,8 @@ def listen():
     r = sr.Recognizer()
     with sr.Microphone() as source:
         print("I am listening....")
-        r.pause_threshold = 1
+        r.adjust_for_ambient_noise(source)
+        r.pause_threshold = 0.8
         audio = r.listen(source)
 
     try:
@@ -64,21 +69,42 @@ def wish_user():
     else:
         speak("Good Evening")
 
-    speak("I am Assidesk! How may I help you?")
-
+    speak("I am Cortana! How may I help you?")
 
 
 #Function to send a mail
-def mailSent(to, content):
-    server = smtplib.SMTP('smtp.gmail.com', 587)
-    server.ehlo()
-    server.starttls()
-    # when you start working with the assistant, save this on your device
-    server.login(GMAIL_ACCOUNT, APP_PASSWORD)
-    # check READme.md for creating an app password
-    server.sendmail(GMAIL_ACCOUNT, to, content)
+def mailSent():
+    speak("please enter your email")
+    sender_email = input("Enter your email: ")
+    # speak("please enter your password")
+    # password = getpass.getpass(prompt="Enter your password: ")
+    password = APP_PASSWORD
+    speak("please enter receiver's email")
+    receiver_email = input("Enter the email: ")
 
-    server.close()
+    speak("what do you want to send? Please enter the body of the mail.")
+    message = input("BODY OF THE MAIL:\n")
+
+
+    em = EmailMessage()
+    em['From'] = sender_email
+    em['To'] = receiver_email
+    em.set_content(message)
+    # Create a secure SSL context
+    context = ssl.create_default_context()
+
+    # Try to log in to server and send email
+    try:
+        server = smtplib.SMTP_SSL(SMTP_SERVER,PORT,context=context)
+        server.login(sender_email, password)
+        # Send the mail
+        server.sendmail(sender_email, receiver_email, message)
+
+    except Exception as e:
+        # Print any error messages to stdout
+        print(e)
+    finally:
+        server.quit()
 
 def chat_with_gpt(prompt):
     response = openai.Completion.create(
@@ -136,15 +162,10 @@ if __name__ == '__main__':
             date = datetime.datetime.today()
             speak(f"Today is {date}")
 
-        elif 'send email' in query:
+        elif 'send a mail' in query:
             try:
-                speak("please tell me the content of the email")
-                content = listen()
-                speak(content)
-                to = input()
-                speak(to)
-                mailSent(to, content)
-                speak(f"successfully sent the email to {to}")
+                mailSent()
+                speak(f"successfully sent the email")
             except Exception as e:
                 print(e)
                 speak("sorry! i was unable to send the mail")
