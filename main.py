@@ -14,7 +14,7 @@ import smtplib, ssl
 import getpass
 from email.message import EmailMessage
 
-OPENAI_API_KEY = 'Your app password'
+OPENAI_API_KEY = 'Your open AI Key password'
 APP_PASSWORD = 'Your app password'
 GMAIL_ACCOUNT = 'dilippatnana1231@gmail.com'
 SMTP_SERVER = "smtp.gmail.com"
