@@ -71,6 +71,17 @@ def wish_user():
 
     speak("I am Cortana! How may I help you?")
 
+# Function to send WhatsApp message
+
+def Send_WhatsApp_Message():
+    speak("To whom should I send the message?Please Enter the number")
+    number = input("Enter the number:")
+    speak("Tell me the message please")
+    message = listen()
+    time_hour = datetime.datetime.now().hour
+    time_min = datetime.datetime.now().minute
+    # print(time_hour,time_min)
+    kit.sendwhatmsg_to_group_instantly(number,message,time_hour,time_min)
 
 #Function to send a mail
 def mailSent():
@@ -170,16 +181,10 @@ if __name__ == '__main__':
                 print(e)
                 speak("sorry! i was unable to send the mail")
 
-        elif 'whatsapp message' in query:  # you should be logged in into whatsapp web for this
-            speak("To whom should I send the message?")
-            number = int(input(""))
-            speak("Tell me the message please")
-            message = listen()
-            speak("At what time should i send it? (24 hours system)")
-            hr = int(input("Hours: "))
-            mins = int(input("Minutes: "))
+        elif 'whatsapp message' in query:
+            # you should be logged in into whatsapp web for this 
             # this should be in the format ("+91xxxxxxxxxx","This is message", 15, 20)
-            kit.sendwhatmsg(number, message, hr, mins)
+            Send_WhatsApp_Message()
 
         elif 'open facebook' in query:
             webbrowser.open("facebook.com")
